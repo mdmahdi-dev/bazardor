@@ -1,14 +1,17 @@
-
 import { betterAuth } from "better-auth";
-import Database from "better-sqlite3";
+import { MongoClient } from "mongodb";
+import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import dns from "node:dns";
+
+dns.setServers(["8.8.8.8"]);
+
+const mongoClient = new MongoClient(process.env.MONGODB_URI!);
 
 export const auth = betterAuth({
-  database: new Database("./sqlite.db"),
-
+  database: mongodbAdapter(mongoClient.db()),
   emailAndPassword: {
     enabled: true,
   },
-
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
